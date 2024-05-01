@@ -6,6 +6,10 @@ dotenv.config();
 const PORT = process.env.PORT;
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Gateway is running");
+});
+
 app.listen(PORT, () => {
-  console.log(`Gateway Service running on port ${PORT}`);
+  console.log(`Gateway service running on port ${PORT}`);
 });
