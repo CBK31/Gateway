@@ -1,7 +1,17 @@
 const express = require("express");
-const myRoutes = express.Router();
+const Routes = express.Router();
 const forwardRequest = require("../utils/forwardRequest");
+const authentication = require("../middleware/authentication");
+const dotenv = require("dotenv");
+dotenv.config();
 
-myRoutes.use("/signup", forwardRequest("http://localhost:3001"));
+const IDP_PATH = process.env.IDP_PATH;
+const IDP_PORT = process.env.IDP_PORT;
 
-module.exports = myRoutes;
+Routes.use(
+  "/token",
+  authentication(),
+  forwardRequest(`${IDP_PATH}${IDP_PORT}`, "POST")
+);
+
+module.exports = Routes;

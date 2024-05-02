@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 function forwardRequest(serviceUrl) {
-  return async (req, res, next) => {
+  return async (req, res) => {
     try {
       const response = await axios({
         method: req.method,
@@ -11,8 +11,9 @@ function forwardRequest(serviceUrl) {
       });
       res.status(response.status).json(response.data);
     } catch (error) {
-      console.error("Error forwarding request:", error);
+      console.error("Error forwarding request:", error.message);
       if (!res.headersSent) {
+        console.log("my response : " + res.message);
         res.status(500).json({ message: "Internal Server Error" });
       }
     }
