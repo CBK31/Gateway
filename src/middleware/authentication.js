@@ -26,7 +26,7 @@ const authenticateToken = () => {
       //     }
       //   );
 
-      req.user.id = response.data.id;
+      //  req.user.id = response.data.id;
 
       next();
     } catch (error) {
@@ -35,6 +35,7 @@ const authenticateToken = () => {
           .status(error.response.status)
           .json({ error: error.response.data.error });
       } else {
+        console.log(error);
         return res.status(500).json({ error: "Failed to verify token" });
       }
     }

@@ -4,7 +4,7 @@ function forwardRequest(serviceUrl) {
   return async (req, res) => {
     try {
       const response = await axios({
-        method: req.method,
+        method: "POST",
         url: `${serviceUrl}${req.url}`,
         data: req.body,
         headers: { ...req.headers, host: serviceUrl },

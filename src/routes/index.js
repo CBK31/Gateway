@@ -10,8 +10,8 @@ const IDP_PORT = process.env.IDP_PORT;
 
 Routes.use(
   "/token",
-  authentication(),
-  forwardRequest(`${IDP_PATH}${IDP_PORT}`, "POST")
+  authentication()
+  //forwardRequest(`${IDP_PATH}${IDP_PORT}`)
 );
 
 module.exports = Routes;

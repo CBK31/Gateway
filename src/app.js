@@ -8,7 +8,7 @@ const RoutesIndex = require("./routes/index");
 
 app.use(express.json());
 
-//app.use(auditTrail);
+app.use(auditTrail);
 
 app.use("/", RoutesIndex);
 
