@@ -1,3 +1,4 @@
+const { inspect } = require("util");
 const serviceMap = {
   "/signup": "IDP Microservice",
   "/signin": "IDP Microservice",
@@ -22,19 +23,24 @@ function auditTrail(req, res, next) {
     url: req.originalUrl,
     method: req.method,
     statusCode: null,
-    userId: req.user ? req.user.id : "Anonymous",
+    userId: "Anonymous",
     userAgent: req.headers["user-agent"],
-    headers: JSON.stringify(req.headers),
-    params: JSON.stringify(req.params),
-    body: JSON.stringify(req.body),
+    headers: req.headers,
+    params: req.params,
+    query: req.query,
+    requestBody: req.body,
     result: "",
     success: true,
   };
 
   res.on("finish", () => {
+    const resBodyParsed = JSON.parse(responseBody);
     auditData.statusCode = res.statusCode;
     auditData.success = res.statusCode >= 200 && res.statusCode < 300;
-    auditData.result = JSON.stringify(responseBody);
+    auditData.result = resBodyParsed;
+    auditData.userId = resBodyParsed.userId
+      ? resBodyParsed.userId
+      : "Anonymous";
     console.log("AUDIT:", auditData);
   });
 
