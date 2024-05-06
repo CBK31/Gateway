@@ -1,10 +1,12 @@
-const { inspect } = require("util");
+const { isValidJSON } = require("../utils/checkJsonValidity");
+
 const serviceMap = {
-  "/signup": "IDP Microservice",
-  "/signin": "IDP Microservice",
+  "/user": "IDP Microservice",
+  // "/user/signin": "IDP Microservice",
 };
 
 function auditTrail(req, res, next) {
+  console.log("3am bfout 3al audit BEL RAW7A ");
   const originalSend = res.send;
   let responseBody = {};
 
@@ -14,33 +16,35 @@ function auditTrail(req, res, next) {
   };
 
   const microservice =
-    Object.keys(serviceMap).find((key) => req.path.startsWith(key)) ||
-    "Unknown";
+    serviceMap[
+      Object.keys(serviceMap).find((key) => req.path.startsWith(key))
+    ] || "Unknown";
 
   const auditData = {
     timestamp: new Date(),
-    microservice: serviceMap[microservice],
+    microservice,
     url: req.originalUrl,
     method: req.method,
     statusCode: null,
-    userId: "Anonymous",
+    userId: req.userId || "Unknown",
     userAgent: req.headers["user-agent"],
     headers: req.headers,
     params: req.params,
     query: req.query,
     requestBody: req.body,
-    result: "",
+    result: {},
     success: true,
   };
 
   res.on("finish", () => {
-    const resBodyParsed = JSON.parse(responseBody);
+    console.log("3am bfout 3al audit BEL RAJ3A " + responseBody);
     auditData.statusCode = res.statusCode;
     auditData.success = res.statusCode >= 200 && res.statusCode < 300;
-    auditData.result = resBodyParsed;
-    auditData.userId = resBodyParsed.userId
-      ? resBodyParsed.userId
-      : "Anonymous";
+    if (isValidJSON(responseBody)) {
+      const resBodyParsed = JSON.parse(responseBody);
+      auditData.result = resBodyParsed;
+      auditData.userId = resBodyParsed.userId || "Anonymous";
+    }
     console.log("AUDIT:", auditData);
   });
 
@@ -48,3 +52,8 @@ function auditTrail(req, res, next) {
 }
 
 module.exports = auditTrail;
+//module.exports = { isValidJSON };
+//module.exports = setUserId();
+// if (req.originalUrl.includes("/token/verify") || resBodyParsed.userId) {
+//   auditData.userId = resBodyParsed.userId || "Anonymous";
+// }

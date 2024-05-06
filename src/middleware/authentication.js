@@ -2,7 +2,7 @@ const forwardRequest = require("../utils/forwardRequest");
 const axios = require("axios");
 const { error } = require("console");
 const { inspect } = require("util");
-//import { inspect } from "util";
+const { auditTrail } = require("./auditTrail");
 const authenticateToken = () => {
   return async (req, res, next) => {
     const authHeader = req.headers["authorization"];
@@ -11,18 +11,19 @@ const authenticateToken = () => {
 
     if (!token) {
       console.log(" exception handeling ");
-      return res.status(401).json({ error: "No token provided" });
+      return res.status(401).json({ error: "Authorization token is missing" });
     }
 
     try {
       const IDP_PATH = process.env.IDP_PATH;
       const IDP_PORT = process.env.IDP_PORT;
-      req.customUrl = "/token/verify";
+      //req.customUrl = "/token/verify";
       const requestMethod = "POST";
+
       const response = await forwardRequest(
         req,
         requestMethod,
-        `${IDP_PATH}${IDP_PORT}`
+        `${IDP_PATH}${IDP_PORT}/token/verify`
       );
 
       // const response = await axios.post(
@@ -36,13 +37,28 @@ const authenticateToken = () => {
       // );
       //console.log()
       //  res.userInfo = response.userInfo; ///// elo 3aze ?/////////////
+
+      // if (response.data.userId) {
+      //   auditTrail.userId = response.data.userId;
+      // }
+
       if (response) {
-        return res.status(response.status).json(response.data);
+        console.log(`
+        
+        my request user id : ${response.data.userId}
+        
+        
+        `);
+        req.userId = response.data.userId;
+
+        next();
+        //  return res.status(response.status).json(response.data);
+        // return res;
       } else {
         console.log(error);
         return res
           .status(400)
-          .json({ error: "error handeling : bad request aa" });
+          .json({ error: "error handeling : bad request a" });
       }
     } catch (error) {
       if (error.response) {
@@ -50,7 +66,7 @@ const authenticateToken = () => {
           .status(error.response.status)
           .json({ error: error.response.data.error });
       } else {
-        //  console.log(error);
+        console.log(error);
         return res.status(500).json({ error: "Failed to verify token" });
       }
     }
