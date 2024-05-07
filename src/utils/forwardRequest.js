@@ -16,14 +16,35 @@ const forwardRequest = async (req, requestMethod, serviceUrl) => {
         "Content-Type": "application/json",
         Authorization: req.headers["authorization"],
       },
+      timeout: 5000,
     });
 
     return response;
     //return res.status(response.status).json(response.data);
   } catch (error) {
-    console.error("error handeling : Error forwarding request:", error.message);
+    console.error("Error handling - Error forwarding request:", error.message);
+
+    if (error.response) {
+      return {
+        status: error.response.status,
+        data: error.response.data,
+      };
+    } else {
+      return {
+        status: 500,
+        data: {
+          message: "Internal Server Error - Unable to contact the service",
+        },
+      };
+    }
   }
 };
+
+// old version
+// catch (error) {
+//   console.error("error handeling : Error forwarding request:", error.message);
+//   return error;
+// }
 
 module.exports = forwardRequest;
 

@@ -1,12 +1,12 @@
-const { isValidJSON } = require("../utils/checkJsonValidity");
-
+const getTokenFromReq = require("../utils/getTokenFromReq");
+const getPayloadFromToken = require("../utils/getPayloadFromToken");
 const serviceMap = {
-  "/user": "IDP Microservice",
-  // "/user/signin": "IDP Microservice",
+  "/token": "IDP",
+  "/user": "IDP",
+  "/video-provider": "Video Provider",
 };
 
 function auditTrail(req, res, next) {
-  console.log("3am bfout 3al audit BEL RAW7A ");
   const originalSend = res.send;
   let responseBody = {};
 
@@ -26,34 +26,54 @@ function auditTrail(req, res, next) {
     url: req.originalUrl,
     method: req.method,
     statusCode: null,
-    userId: req.userId || "Unknown",
+    userId: "Unknown",
     userAgent: req.headers["user-agent"],
     headers: req.headers,
-    params: req.params,
-    query: req.query,
+    queryParams: req.query,
     requestBody: req.body,
     result: {},
     success: true,
   };
 
-  res.on("finish", () => {
-    console.log("3am bfout 3al audit BEL RAJ3A " + responseBody);
+  res.on("finish", async () => {
     auditData.statusCode = res.statusCode;
     auditData.success = res.statusCode >= 200 && res.statusCode < 300;
-    if (isValidJSON(responseBody)) {
-      const resBodyParsed = JSON.parse(responseBody);
-      auditData.result = resBodyParsed;
-      auditData.userId = resBodyParsed.userId || "Anonymous";
+
+    try {
+      const resBodyParsed = jsonParser(responseBody);
+
+      auditData.result =
+        resBodyParsed.message ||
+        resBodyParsed.error ||
+        resBodyParsed ||
+        responseBody;
+
+      // let token = req.headers.authorization?.split(" ")[1];
+      let token = await getTokenFromReq(req);
+      let payload = await getPayloadFromToken(token);
+      if (!payload) {
+        token = resBodyParsed.token;
+        payload = await getPayloadFromToken(token);
+        console.log("payload in audit trail " + JSON.stringify(payload));
+        console.log("");
+      }
+      auditData.userId = payload._id || "Unknown";
+    } catch (error) {
+      //console.log(error);
     }
+
     console.log("AUDIT:", auditData);
   });
 
+  function jsonParser(obj) {
+    try {
+      return JSON.parse(obj);
+    } catch (error) {
+      return undefined;
+    }
+  }
   next();
 }
 
 module.exports = auditTrail;
-//module.exports = { isValidJSON };
-//module.exports = setUserId();
-// if (req.originalUrl.includes("/token/verify") || resBodyParsed.userId) {
-//   auditData.userId = resBodyParsed.userId || "Anonymous";
-// }
+//Params: req.params,

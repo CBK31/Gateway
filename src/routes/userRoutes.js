@@ -9,19 +9,19 @@ dotenv.config();
 const IDP_PATH = process.env.IDP_PATH;
 const IDP_PORT = process.env.IDP_PORT;
 
-Routes.use(
-  "/signup",
-  (req, res, next) => {
-    console.log("fetet 3al /signup bel useRoutes.js ");
-    next();
-  },
-  authentication(),
-  (req, res, next) => {
-    console.log("5allas mnel auth w feyit 3al redirect request  ");
-    //res.status(200).json("oke");
-    next();
-  },
-  redirectRequest
-);
+Routes.post("/signup", redirectRequest);
+
+Routes.post("/signin", redirectRequest);
+
+Routes.get("/profile/view", authentication(), redirectRequest);
+
+Routes.patch("/profile/edit", authentication(), redirectRequest);
 
 module.exports = Routes;
+
+// //authentication(),
+// (req, res, next) => {
+//   console.log("5allas mnel auth w feyit 3al redirect request  ");
+//   //res.status(200).json("oke");
+//   next();
+// },
