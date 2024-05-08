@@ -1,22 +1,16 @@
 const forwardRequest = require("../utils/forwardRequest");
 const getTokenFromReq = require("..//utils/getTokenFromReq");
-const axios = require("axios");
+const { ErrorMessages } = require("../utils/exceptions");
+const { CustomError } = require("../utils/exceptions");
+const ErrorHandler = require("../utils/errorHandler");
 
 const authenticateToken = () => {
   return async (req, res, next) => {
-    ////////////////////////////////////////////////////////////
-    // HONE BEDDE ZABBETA LA SIR ESTA3MIL : getTokenFromReq(req); BEL IF
-
-    // const authHeader = req.headers["authorization"];
-    // const token = authHeader && authHeader.split(" ")[1];
     const token = await getTokenFromReq(req);
-    console.log("fetit 3al authenticate Token ");
-
     if (!token) {
-      console.log(" exception handeling ");
-      return res.status(401).json({ error: "Authentication token is missing" });
+      ErrorHandler.handle(ErrorMessages.noAuthTokenProvided, res);
     }
-    ////////////////////////////////////////////////////////
+
     try {
       const IDP_PATH = process.env.IDP_PATH;
       const IDP_PORT = process.env.IDP_PORT;
@@ -29,31 +23,31 @@ const authenticateToken = () => {
       );
 
       if (response && response.status >= 400 && response.status < 600) {
-        return res.status(response.status).json(response.data.error);
+        ErrorHandler.handle(
+          new CustomError(
+            response.data.error || response.data.message,
+            response.status
+          ),
+          res
+        );
       } else {
-        //req.headers.authorization = `Bearer ${response.token}`;
-
-        const aa = await getTokenFromReq(req);
-
-        console.log(`
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-MY NEW TOKEN HEADER :   ${aa}
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-`);
-
+        // I wasn't sure if the new token should replace the old one, go to the front, or do both
+        if (response.data && response.data.token) {
+          req.headers.authorization = `Bearer ${response.data.token}`;
+          if (req.originalUrl === "/user/token/verify") {
+            res.status(200).json({ token: response.data.token });
+          }
+        }
         next();
       }
     } catch (error) {
-      if (error.response) {
-        return res
-          .status(error.response.status)
-          .json({ error: error.response.data.error });
-      } else {
-        console.log(error);
-        return res.status(500).json({ error: "Failed to verify token" });
-      }
+      ErrorHandler.handle(
+        new CustomError(
+          error.message || "internal server error - authentication service",
+          error.status
+        ),
+        res
+      );
     }
   };
 };

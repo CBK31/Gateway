@@ -6,12 +6,14 @@ const redirectRequest = require("../middleware/redirectRequest");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const IDP_PATH = process.env.IDP_PATH;
-const IDP_PORT = process.env.IDP_PORT;
+// const IDP_PATH = process.env.IDP_PATH;
+// const IDP_PORT = process.env.IDP_PORT;
 
 Routes.post("/signup", redirectRequest);
 
 Routes.post("/signin", redirectRequest);
+
+Routes.get("/token/verify", authentication());
 
 Routes.get("/profile/view", authentication(), redirectRequest);
 

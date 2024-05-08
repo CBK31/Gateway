@@ -48,20 +48,19 @@ function auditTrail(req, res, next) {
         resBodyParsed ||
         responseBody;
 
-      // let token = req.headers.authorization?.split(" ")[1];
       let token = await getTokenFromReq(req);
       let payload = await getPayloadFromToken(token);
       if (!payload) {
         token = resBodyParsed.token;
         payload = await getPayloadFromToken(token);
-        console.log("payload in audit trail " + JSON.stringify(payload));
-        console.log("");
+        // console.log("payload in audit trail " + JSON.stringify(payload));
       }
       auditData.userId = payload._id || "Unknown";
-    } catch (error) {
-      //console.log(error);
-    }
-
+    } catch (error) {}
+    console.log(""); //
+    console.log("======================================================"); //
+    console.log("======================================================"); //
+    console.log(""); //
     console.log("AUDIT:", auditData);
   });
 

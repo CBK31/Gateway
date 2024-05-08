@@ -1,12 +1,12 @@
 const forwardRequest = require("../utils/forwardRequest");
-const axios = require("axios");
 const { error } = require("console");
-const { inspect } = require("util");
+const { ErrorMessages } = require("../utils/exceptions");
+const { CustomError } = require("../utils/exceptions");
+const ErrorHandler = require("../utils/errorHandler");
+// const { inspect } = require("util");
 
 const getServiceUrl = (req) => {
   const basePath = req.originalUrl.split("/")[1];
-
-  // console.log("=============== my based path : " + basePath);
 
   switch (basePath) {
     case "user":
@@ -21,10 +21,8 @@ const getServiceUrl = (req) => {
 
 const redirectRequest = async (req, res) => {
   const serviceUrl = getServiceUrl(req);
-  // console.log("ana bi aleb el redirect request ");
   if (!serviceUrl) {
-    //  console.log(inspect(req));
-    return res.status(404).json({ error: "error handeling Service not found" });
+    ErrorHandler.handle(ErrorMessages.serviceNotFound, res);
   }
 
   try {
@@ -35,21 +33,24 @@ const redirectRequest = async (req, res) => {
     );
 
     if (response) {
-      // console.log(`
-
-      // my response is  from the redirect message : ${inspect(response)}
-
-      // `);
       return res.status(response.status).send(response.data);
     } else {
       console.log(error);
-      return res.status(500).json({ error: "No response from service" });
+      ErrorHandler.handle(ErrorMessages.serviceUnavailable, res);
     }
   } catch (error) {
     if (error.response) {
-      return res.status(error.response.status).json(error.response.data);
+      //  return res.status(error.response.status).json(error.response.data);
+      ErrorHandler.handle(
+        new CustomError(error.response.status, error.response.data),
+        res
+      );
     } else {
-      return res.status(500).json({ error: "Internal Server Error" });
+      ErrorHandler.handle(
+        new CustomError(error.status, error.data || error.message),
+        res
+      );
+      // return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 };
