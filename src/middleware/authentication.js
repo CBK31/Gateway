@@ -41,13 +41,13 @@ const authenticateToken = () => {
         next();
       }
     } catch (error) {
-      ErrorHandler.handle(
-        new CustomError(
-          error.message || "internal server error - authentication service",
-          error.status
-        ),
-        res
-      );
+      // ErrorHandler.handle(
+      //   new CustomError(
+      //     error.message || "internal server error - authentication service",
+      //     error.status
+      //   ),
+      //   res
+      // );
     }
   };
 };
