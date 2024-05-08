@@ -53,15 +53,9 @@ function auditTrail(req, res, next) {
       if (!payload) {
         token = resBodyParsed.token;
         payload = await getPayloadFromToken(token);
-        // console.log("payload in audit trail " + JSON.stringify(payload));
       }
       auditData.userId = payload._id || "Unknown";
     } catch (error) {}
-    console.log(""); //
-    console.log("======================================================"); //
-    console.log("======================================================"); //
-    console.log(""); //
-    console.log("AUDIT:", auditData);
   });
 
   function jsonParser(obj) {

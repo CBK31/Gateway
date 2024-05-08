@@ -11,10 +11,6 @@ const IDP_PORT = process.env.IDP_PORT;
 const V_P_PATH = process.env.VIDEO_PROVIDER_PATH;
 const V_P_PORT = process.env.VIDEO_PROVIDER_PORT;
 
-Routes.use(
-  "/",
-  authentication()
-  //forwardRequest(`${IDP_PATH}${IDP_PORT}`)
-);
+Routes.use("/", authentication());
 
 module.exports = Routes;

@@ -3,7 +3,6 @@ const { error } = require("console");
 const { ErrorMessages } = require("../utils/exceptions");
 const { CustomError } = require("../utils/exceptions");
 const ErrorHandler = require("../utils/errorHandler");
-// const { inspect } = require("util");
 
 const getServiceUrl = (req) => {
   const basePath = req.originalUrl.split("/")[1];
@@ -40,7 +39,6 @@ const redirectRequest = async (req, res) => {
     }
   } catch (error) {
     if (error.response) {
-      //  return res.status(error.response.status).json(error.response.data);
       ErrorHandler.handle(
         new CustomError(error.response.status, error.response.data),
         res
@@ -50,7 +48,6 @@ const redirectRequest = async (req, res) => {
         new CustomError(error.status, error.data || error.message),
         res
       );
-      // return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 };
