@@ -1,16 +1,22 @@
 const express = require("express");
-const Routes = express.Router();
+const Router = express.Router();
 const redirectRequest = require("../middleware/redirectRequest");
 const authentication = require("../middleware/authentication");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const IDP_PATH = process.env.IDP_PATH;
-const IDP_PORT = process.env.IDP_PORT;
+Router.get("/available", redirectRequest);
 
-const V_P_PATH = process.env.VIDEO_PROVIDER_PATH;
-const V_P_PORT = process.env.VIDEO_PROVIDER_PORT;
+Router.get("/play/:id", authentication(), redirectRequest);
 
-Routes.use("/", authentication());
+Router.post("/addcomment", authentication(), redirectRequest);
 
-module.exports = Routes;
+Router.put("/updatecomment", authentication(), redirectRequest);
+
+Router.post("/replycomment", authentication(), redirectRequest);
+
+Router.post("/getallcomment", authentication(), redirectRequest);
+
+Router.post("/addrating", authentication(), redirectRequest);
+
+module.exports = Router;
