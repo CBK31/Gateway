@@ -15,7 +15,7 @@ Router.put("/updatecomment/:id", authentication(), redirectRequest);
 
 Router.post("/replycomment/:id", authentication(), redirectRequest);
 
-Router.post("/getallcomments/:id", authentication(), redirectRequest);
+Router.get("/getallcomments/:id", authentication(), redirectRequest);
 
 Router.post("/addrating/:id", authentication(), redirectRequest);
 
