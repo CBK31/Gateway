@@ -1,5 +1,6 @@
 const getTokenFromReq = require("../utils/getTokenFromReq");
 const getPayloadFromToken = require("../utils/getPayloadFromToken");
+const { auditLogger } = require("../utils/logger");
 const serviceMap = {
   "/token": "IDP",
   "/user": "IDP",
@@ -56,8 +57,8 @@ function auditTrail(req, res, next) {
       }
       auditData.userId = payload._id || "Unknown";
     } catch (error) {}
-
-    console.log("AUDIT:", auditData);
+    auditLogger.info(auditData);
+    // console.log("AUDIT:", auditData);
   });
 
   function jsonParser(obj) {
