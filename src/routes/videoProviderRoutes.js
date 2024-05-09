@@ -9,14 +9,14 @@ Router.get("/available", redirectRequest);
 
 Router.get("/play/:id", authentication(), redirectRequest);
 
-Router.post("/addcomment", authentication(), redirectRequest);
+Router.post("/addcomment/:id", authentication(), redirectRequest);
 
-Router.put("/updatecomment", authentication(), redirectRequest);
+Router.put("/updatecomment/:id", authentication(), redirectRequest);
 
-Router.post("/replycomment", authentication(), redirectRequest);
+Router.post("/replycomment/:id", authentication(), redirectRequest);
 
-Router.post("/getallcomment", authentication(), redirectRequest);
+Router.post("/getallcomments/:id", authentication(), redirectRequest);
 
-Router.post("/addrating", authentication(), redirectRequest);
+Router.post("/addrating/:id", authentication(), redirectRequest);
 
 module.exports = Router;
