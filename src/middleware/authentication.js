@@ -31,7 +31,7 @@ const authenticateToken = () => {
           res
         );
       } else {
-        // I wasn't sure if the new token should replace the old one, go to the front, or do both
+        // It wasn't clear about the new token , it should replace the old one, go to the front, or do both
         if (response.data && response.data.token) {
           req.headers.authorization = `Bearer ${response.data.token}`;
           if (req.originalUrl === "/user/token/verify") {
@@ -40,15 +40,7 @@ const authenticateToken = () => {
         }
         next();
       }
-    } catch (error) {
-      // ErrorHandler.handle(
-      //   new CustomError(
-      //     error.message || "internal server error - authentication service",
-      //     error.status
-      //   ),
-      //   res
-      // );
-    }
+    } catch (error) {}
   };
 };
 

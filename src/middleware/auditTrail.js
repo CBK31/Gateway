@@ -56,10 +56,7 @@ function auditTrail(req, res, next) {
       }
       auditData.userId = payload._id || "Unknown";
     } catch (error) {}
-    console.log(""); //
-    console.log("======================================================"); //
-    console.log("======================================================"); //
-    console.log(""); //
+
     console.log("AUDIT:", auditData);
   });
 
@@ -74,4 +71,3 @@ function auditTrail(req, res, next) {
 }
 
 module.exports = auditTrail;
-//Params: req.params,

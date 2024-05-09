@@ -1,5 +1,4 @@
 const forwardRequest = require("../utils/forwardRequest");
-const { error } = require("console");
 const { ErrorMessages } = require("../utils/exceptions");
 const { CustomError } = require("../utils/exceptions");
 const ErrorHandler = require("../utils/errorHandler");
@@ -34,7 +33,6 @@ const redirectRequest = async (req, res) => {
     if (response) {
       return res.status(response.status).send(response.data);
     } else {
-      console.log(error);
       ErrorHandler.handle(ErrorMessages.serviceUnavailable, res);
     }
   } catch (error) {
