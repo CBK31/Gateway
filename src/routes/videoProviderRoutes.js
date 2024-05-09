@@ -1,6 +1,6 @@
 const express = require("express");
 const Routes = express.Router();
-const forwardRequest = require("../utils/forwardRequest");
+const redirectRequest = require("../middleware/redirectRequest");
 const authentication = require("../middleware/authentication");
 const dotenv = require("dotenv");
 dotenv.config();
