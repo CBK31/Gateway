@@ -58,7 +58,7 @@ function auditTrail(req, res, next) {
       auditData.userId = payload._id || "Unknown";
     } catch (error) {}
     auditLogger.info(auditData);
-    // console.log("AUDIT:", auditData);
+    console.log("AUDIT:", auditData);
   });
 
   function jsonParser(obj) {

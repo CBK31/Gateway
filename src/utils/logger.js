@@ -5,10 +5,7 @@ const auditLogger = createLogger({
   format: format.combine(
     format.printf((info) => `${JSON.stringify(info.message)}`)
   ),
-  transports: [
-    new transports.File({ filename: "./audit.log" }),
-    new transports.Console(),
-  ],
+  transports: [new transports.File({ filename: "./audit.log" })],
 });
 
 module.exports = { auditLogger };
